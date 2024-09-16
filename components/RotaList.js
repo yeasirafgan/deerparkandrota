@@ -1,16 +1,19 @@
-// components/RotaList.js
+// // // // components/RotaList.js
+
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-export default function RotaList() {
+export default function RotaList({ userRole }) {
+  // Accept userRole as a prop
   const [rotas, setRotas] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchRotas() {
       try {
-        const response = await fetch('/api/rota/list'); // Adjust endpoint as needed
+        const response = await fetch('/api/rota/list');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -47,7 +50,7 @@ export default function RotaList() {
   }
 
   return (
-    <div className='p-6 bg-slate-100 min-h-screen'>
+    <div className='p-6 bg-slate-100'>
       {error && <p className='text-red-500 mb-4'>{error}</p>}
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         {rotas.length === 0 ? (
@@ -71,12 +74,24 @@ export default function RotaList() {
                   >
                     View
                   </Link>
-                  <button
-                    onClick={() => handleDelete(rota._id)}
-                    className='text-red-800 font-semibold hover:text-red-600'
-                  >
-                    Delete
-                  </button>
+
+                  {/* Conditionally show Edit and Delete buttons based on userRole */}
+                  {userRole === 'admin' && (
+                    <>
+                      <Link
+                        href={`/rota/edit/${rota._id}`}
+                        className='text-blue-800 font-semibold hover:text-blue-600'
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(rota._id)}
+                        className='text-red-800 font-semibold hover:text-red-600'
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

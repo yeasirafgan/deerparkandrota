@@ -11,11 +11,29 @@ export async function PATCH(request) {
   console.log('Updates:', updates);
 
   await connectMongo();
-  const updatedRota = await Rota.findByIdAndUpdate(id, updates, { new: true });
+  const rota = await Rota.findById(id);
 
-  if (!updatedRota) {
+  if (!rota) {
     return NextResponse.json({ error: 'Rota not found' }, { status: 404 });
   }
+
+  // Handle updates to parsedData
+  if (updates.parsedData) {
+    updates.parsedData.forEach((update, index) => {
+      if (rota.parsedData[index]) {
+        // Update existing row
+        Object.assign(rota.parsedData[index], update);
+      } else {
+        // Add new row if it doesn't exist
+        rota.parsedData.push(update);
+      }
+    });
+  }
+
+  // Apply other updates
+  Object.assign(rota, updates);
+
+  const updatedRota = await rota.save();
 
   return NextResponse.json(updatedRota);
 }

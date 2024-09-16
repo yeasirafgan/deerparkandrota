@@ -95,6 +95,12 @@ const AdminPage = async () => {
     <main className='p-4 sm:p-8'>
       <div className='flex justify-end gap-3 mb-4'>
         <Link
+          href='../rota'
+          className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
+        >
+          Go to Rota page
+        </Link>
+        <Link
           href='/api/generate-timesheet?type=summary'
           className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
         >

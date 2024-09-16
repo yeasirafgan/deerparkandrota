@@ -1,4 +1,4 @@
-// app/api/rota/create/route.js
+// // app/api/rota/create/route.js
 
 import { parseExcelFile } from '/utils/excelUtils';
 import { NextResponse } from 'next/server';
@@ -10,14 +10,16 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get('file');
     const name = formData.get('name'); // Get rota name from form data
+    const weekStart = formData.get('weekStart'); // Capture weekStart from the form
 
     console.log('File received:', file);
     console.log('File name:', file.name);
     console.log('Rota name:', name);
+    console.log('Week Start:', weekStart); // Debugging line to ensure weekStart is being captured
 
-    if (!file || !name) {
+    if (!file || !name || !weekStart) {
       return NextResponse.json(
-        { error: 'No file or name provided' },
+        { error: 'File, name, and weekStart are required' },
         { status: 400 }
       );
     }
@@ -38,6 +40,7 @@ export async function POST(request) {
     const newRota = new Rota({
       name: name,
       fileData: file.name, // Store file name or path
+      weekStart: weekStart, // Include the weekStart field in the rota document
       parsedData: jsonData,
     });
 

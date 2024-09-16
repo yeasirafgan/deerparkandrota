@@ -5,6 +5,7 @@ import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import UserTimesheetData from '@/components/UserTimesheetData';
 import { redirect } from 'next/navigation';
 import TimesheetForm from './TimesheetForm';
+import RotaList from '@/components/RotaList';
 
 export const metadata = {
   title: 'Timesheet page',
@@ -39,6 +40,7 @@ const TimesheetPage = async ({ searchParams }) => {
 
       <div className='bg-white lg:ml-2 shadow-lg rounded-lg p-8 w-full md:w-1/2 lg:w-2/3'>
         <UserTimesheetData username={username} />
+        <RotaList userRole='basic' />
       </div>
     </main>
   );
