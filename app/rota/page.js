@@ -22,11 +22,9 @@ export default function RotaPage() {
 
       const result = await response.json();
       if (response.ok) {
-        // Trigger a page refresh to update the rota list
-        router.refresh(); // This method will refresh the page to reflect changes
+        router.refresh(); // Refresh the page to reflect changes
       } else {
-        // Handle error
-        console.error(result);
+        console.error('Error response:', result);
       }
     } catch (error) {
       console.error('Upload failed:', error);

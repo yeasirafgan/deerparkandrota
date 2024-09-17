@@ -1,4 +1,4 @@
-// // //app/rota/[id]/page.js
+//app/rota/[id]/page.js
 'use client';
 
 import { useState, useEffect } from 'react';

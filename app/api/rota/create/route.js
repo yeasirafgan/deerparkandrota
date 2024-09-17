@@ -1,56 +1,41 @@
-// // app/api/rota/create/route.js
+// app/api/rota/create/route.js
 
-import { parseExcelFile } from '/utils/excelUtils';
-import { NextResponse } from 'next/server';
 import connectMongo from '/db/connectMongo';
 import Rota from '/models/Rota';
+import { parseExcelFile } from '/utils/excelUtils'; // Adjust the path if needed
 
 export async function POST(request) {
   try {
+    await connectMongo();
+
     const formData = await request.formData();
     const file = formData.get('file');
-    const name = formData.get('name'); // Get rota name from form data
-    const weekStart = formData.get('weekStart'); // Capture weekStart from the form
 
-    console.log('File received:', file);
-    console.log('File name:', file.name);
-    console.log('Rota name:', name);
-    console.log('Week Start:', weekStart); // Debugging line to ensure weekStart is being captured
-
-    if (!file || !name || !weekStart) {
-      return NextResponse.json(
-        { error: 'File, name, and weekStart are required' },
-        { status: 400 }
-      );
+    if (!file) {
+      return new Response(JSON.stringify({ error: 'File is required' }), {
+        status: 400,
+      });
     }
 
-    const fileBuffer = Buffer.from(await file.arrayBuffer()); // Convert to Buffer
-    let jsonData = await parseExcelFile(fileBuffer);
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const parsedData = await parseExcelFile(fileBuffer); // Use parseExcelFile here
 
-    // Filter out empty objects
-    jsonData = jsonData.filter((item) => {
-      // Check if the staff or post field contains meaningful data
-      return item.staff?.trim() || item.post?.trim();
+    const rota = new Rota({
+      name: formData.get('name'),
+      weekStart: new Date(formData.get('weekStart')),
+      parsedData: parsedData,
     });
 
-    console.log('Filtered Parsed Data to Save:', jsonData); // Debugging line
+    await rota.save();
 
-    // Save the parsed data to MongoDB
-    await connectMongo();
-    const newRota = new Rota({
-      name: name,
-      fileData: file.name, // Store file name or path
-      weekStart: weekStart, // Include the weekStart field in the rota document
-      parsedData: jsonData,
-    });
-
-    await newRota.save();
-    return NextResponse.json(newRota);
-  } catch (error) {
-    console.error('Error processing request:', error);
-    return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ message: 'Rota uploaded successfully' }),
+      { status: 200 }
     );
+  } catch (error) {
+    console.error('Error uploading rota:', error);
+    return new Response(JSON.stringify({ error: 'Failed to upload rota' }), {
+      status: 500,
+    });
   }
 }

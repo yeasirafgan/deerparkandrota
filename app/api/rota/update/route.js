@@ -1,8 +1,9 @@
-//app/api/rota/update/route.js
+// app/api/rota/update/route.js
 
 import { NextResponse } from 'next/server';
 import connectMongo from '/db/connectMongo';
 import Rota from '/models/Rota';
+import mongoose from 'mongoose';
 
 export async function PATCH(request) {
   const { id, updates } = await request.json();
@@ -15,6 +16,17 @@ export async function PATCH(request) {
 
   if (!rota) {
     return NextResponse.json({ error: 'Rota not found' }, { status: 404 });
+  }
+
+  // Validate ObjectId for updates
+  if (
+    updates.uploadedBy &&
+    !mongoose.Types.ObjectId.isValid(updates.uploadedBy)
+  ) {
+    return NextResponse.json(
+      { error: 'Invalid uploadedBy ID' },
+      { status: 400 }
+    );
   }
 
   // Handle updates to parsedData

@@ -33,6 +33,8 @@ export default function RotaUploadForm({ onSubmit, isSubmitting }) {
       onSubmit={handleSubmit}
       className='flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-lg shadow-lg w-full max-w-4xl'
     >
+      <input type='hidden' name='uploadedBy' value='{USER_ID}' />
+
       <input
         type='text'
         placeholder='Rota Name'

@@ -1,4 +1,5 @@
 // import mongoose from 'mongoose';
+// /path/to/rotaModel.js
 
 import mongoose from 'mongoose';
 
@@ -62,11 +63,7 @@ const rotaSchema = new mongoose.Schema(
         },
       },
     ],
-    uploadedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true, // Ensure this field is always set
-    },
+    // uploadedBy field has been removed
   },
   {
     timestamps: true, // Adds createdAt and updatedAt

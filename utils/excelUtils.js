@@ -15,20 +15,8 @@ export const parseExcelFile = async (fileBuffer) => {
 
     // Process rows from the beginning to capture header and initial rows correctly
     worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-      // Skip the header rows and empty rows
-      if (isRowEmpty(row)) return;
-
-      console.log('Row:', rowNumber, {
-        staff: extractCellText(row.getCell(1)),
-        post: extractCellText(row.getCell(2)),
-        monday: extractCellText(row.getCell(3)),
-        tuesday: extractCellText(row.getCell(4)),
-        wednesday: extractCellText(row.getCell(5)),
-        thursday: extractCellText(row.getCell(6)),
-        friday: extractCellText(row.getCell(7)),
-        saturday: extractCellText(row.getCell(8)),
-        sunday: extractCellText(row.getCell(9)),
-      });
+      // Skip the header row and empty rows
+      if (rowNumber === 1 || isRowEmpty(row)) return;
 
       // Extract and process cell values
       jsonData.push({
