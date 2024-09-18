@@ -20,6 +20,7 @@ import { redirect } from 'next/navigation';
 
 const AdminPage = async () => {
   const { isAuthenticated, getUser, getPermission } = getKindeServerSession();
+
   if (!(await isAuthenticated())) {
     redirect('/api/auth/login?post_login_redirect_url=/admin');
   }
@@ -28,6 +29,7 @@ const AdminPage = async () => {
   if (!requiredPermission?.isGranted) {
     redirect('/timesheet');
   }
+
   await getUser();
   await connectMongo();
 
@@ -67,7 +69,7 @@ const AdminPage = async () => {
           new Date(range.end)
         )}`;
         acc[username].periods[periodKey] =
-          (acc[username].periods[periodKey] || 0) + minutesWorked / 60; // Storing as hours
+          (acc[username].periods[periodKey] || 0) + minutesWorked; // Keep minutes for accurate display
         acc[username].totalMinutes += minutesWorked;
       }
     });
@@ -84,8 +86,12 @@ const AdminPage = async () => {
 
   // Function to format hours and minutes based on conditions
   const formatTime = (hours, minutes) => {
-    if (minutes === 0) {
+    if (hours === 0 && minutes === 0) {
+      return `0 mins`;
+    } else if (minutes === 0) {
       return `${hours} hrs`;
+    } else if (hours === 0) {
+      return `${minutes} mins`;
     } else {
       return `${hours} hrs ${minutes} mins`;
     }
@@ -146,17 +152,16 @@ const AdminPage = async () => {
                   const periodKey = `${formatDate(
                     new Date(range.start)
                   )} - ${formatDate(new Date(range.end))}`;
-                  const periodHours = Math.floor(user.periods[periodKey] || 0);
-                  const periodMinutes = Math.round(
-                    (user.periods[periodKey] || 0) * 60
-                  ); // Convert hours to minutes for display
+                  const periodMinutes = user.periods[periodKey] || 0;
+                  const { hours, minutes } =
+                    convertMinutesToHours(periodMinutes);
 
                   return (
                     <td
                       key={index}
                       className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-semibold text-slate-700 hover:text-emerald-900'
                     >
-                      {formatTime(periodHours, periodMinutes % 60)}
+                      {formatTime(hours, minutes)}
                     </td>
                   );
                 })}

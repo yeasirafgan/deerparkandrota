@@ -1,7 +1,7 @@
 // app/api/rota/list/route.js
 
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
+
 import connectMongo from '/db/connectMongo';
 import Rota from '/models/Rota';
 

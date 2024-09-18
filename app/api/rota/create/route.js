@@ -1,4 +1,4 @@
-// app/api/rota/create/route.js
+// // app/api/rota/create/route.js
 
 import connectMongo from '/db/connectMongo';
 import Rota from '/models/Rota';

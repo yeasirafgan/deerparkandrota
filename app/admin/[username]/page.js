@@ -1,4 +1,4 @@
-// // // // app/admin/[username]/page.js
+// app/admin/[username]/page.js
 
 import DeleteButton from '@/components/DeleteButton';
 import EditButton from '@/components/EditButton';
@@ -8,7 +8,7 @@ import {
   calculateHoursWorked,
   calculateMinutesWorked,
   convertMinutesToHours,
-} from '@/utils/dateUtils'; // Ensure these functions exist
+} from '@/utils/dateUtils'; // Ensure these utility functions exist and work correctly
 import Link from 'next/link';
 import { parseISO, format, subWeeks, startOfDay } from 'date-fns';
 
@@ -23,7 +23,7 @@ const UserDetailPage = async ({ params }) => {
   // Connect to MongoDB
   await connectMongo();
 
-  // Fetch timesheets sorted by date descending (latest first)
+  // Fetch timesheets sorted by date in ascending order (oldest first)
   const timesheets = await Timesheet.find({ username }).sort({ date: 1 });
 
   // Function to format the date
@@ -37,6 +37,7 @@ const UserDetailPage = async ({ params }) => {
   const today = new Date();
   const fourWeeksAgo = subWeeks(startOfDay(today), 4); // 4 weeks back
 
+  // Filter timesheets for the last four weeks
   const lastFourWeeksTimesheets = timesheets.filter((timesheet) => {
     const date =
       typeof timesheet.date === 'string'
@@ -45,7 +46,7 @@ const UserDetailPage = async ({ params }) => {
     return date >= fourWeeksAgo;
   });
 
-  // Calculate total minutes
+  // Calculate total minutes worked for the last four weeks
   const totalMinutes = lastFourWeeksTimesheets.reduce((acc, timesheet) => {
     const minutesWorked = calculateMinutesWorked(
       timesheet.start,
@@ -57,13 +58,9 @@ const UserDetailPage = async ({ params }) => {
   // Convert total minutes to hours and minutes
   const { hours, minutes } = convertMinutesToHours(totalMinutes);
 
-  // Function to format hours and minutes based on conditions
+  // Function to format hours and minutes
   const formatTime = (hours, minutes) => {
-    if (minutes === 0) {
-      return `${hours} hrs`;
-    } else {
-      return `${hours} hrs ${minutes} mins`;
-    }
+    return minutes === 0 ? `${hours} hrs` : `${hours} hrs ${minutes} mins`;
   };
 
   return (
@@ -126,7 +123,6 @@ const UserDetailPage = async ({ params }) => {
                     calculateMinutesWorked(timesheet.start, timesheet.end) % 60
                   )}
                 </td>
-
                 <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-lime-800 hover:text-emerald-950 flex gap-2'>
                   <EditButton id={timesheet._id.toString()} />
                   <DeleteButton id={timesheet._id.toString()} />

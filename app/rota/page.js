@@ -1,4 +1,4 @@
-// // app/rota/page.js
+// app/rota/page.js
 
 'use client';
 
@@ -36,22 +36,29 @@ export default function RotaPage() {
   return (
     <div className='min-h-screen bg-gray-100 p-6'>
       <div className='container mx-auto'>
-        <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6'>
-          <h1 className='text-xl font-semibold text-lime-900 mb-4 sm:mb-0'>
-            Manage Rota
-          </h1>
+        {/* Heading */}
+        <h1 className='text-2xl font-bold text-lime-900 mb-6'>Manage Rota</h1>
+
+        {/* Rota Upload Form */}
+        <div className='w-full mb-6'>
           <RotaUploadForm
             onSubmit={handleUpload}
             isSubmitting={isSubmitting}
-            className='w-full sm:w-auto'
+            className='w-full'
           />
         </div>
-        <RotaList userRole='admin' />
+
+        {/* Rota List */}
+        <div className='w-full'>
+          <RotaList userRole='admin' />
+        </div>
       </div>
-      <div className='flex justify-between items-center'>
+
+      {/* Go Back Button */}
+      <div className='flex justify-end items-center mt-4 pr-6'>
         <Link
           href={'/admin'}
-          className='ml-auto px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
+          className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
         >
           Go Back
         </Link>

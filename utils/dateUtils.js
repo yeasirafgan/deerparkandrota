@@ -1,4 +1,4 @@
-// // //mainfolder/utils/dateUtils.js
+//mainfolder/utils/dateUtils.js
 
 import {
   startOfWeek,
@@ -8,12 +8,22 @@ import {
   addDays,
   subWeeks,
 } from 'date-fns';
+import { fromZonedTime, toZonedTime, getTimezoneOffset } from 'date-fns-tz';
+
+const TIME_ZONE = 'UTC'; // Use 'UTC' or your desired time zone
+
+function toUtc(date) {
+  return fromZonedTime(date, TIME_ZONE);
+}
+
+function fromUtc(date) {
+  return toZonedTime(date, TIME_ZONE);
+}
 
 // Get the start and end date of the week
 export function getWeeklyPeriod(date) {
-  const start = startOfWeek(new Date(date), { weekStartsOn: 1 }); // Week starts on Monday
+  const start = startOfWeek(toUtc(new Date(date)), { weekStartsOn: 1 });
   const end = endOfWeek(start, { weekStartsOn: 1 });
-
   return {
     startDate: format(start, 'yyyy-MM-dd'),
     endDate: format(end, 'yyyy-MM-dd'),

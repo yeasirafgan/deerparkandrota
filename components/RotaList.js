@@ -1,4 +1,4 @@
-// // // // components/RotaList.js
+// components/RotaList.js
 
 'use client';
 
@@ -18,6 +18,7 @@ export default function RotaList({ userRole }) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        console.log('Fetched rotas:', data);
         setRotas(data);
       } catch (error) {
         console.error('Error fetching rota list:', error);
