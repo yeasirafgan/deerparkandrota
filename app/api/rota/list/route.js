@@ -12,6 +12,7 @@ export async function GET() {
     return NextResponse.json(rotas);
   } catch (error) {
     console.error('Error fetching rota list:', error);
+    console.error('Error fetching rota list:', error);
     return NextResponse.json(
       { error: 'Failed to fetch rota list' },
       { status: 500 }

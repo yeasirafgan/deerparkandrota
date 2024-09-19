@@ -1,4 +1,4 @@
-//mainfolder/utils/dateUtils.js
+// //mainfolder/utils/dateUtils.js
 
 import {
   startOfWeek,
@@ -7,8 +7,9 @@ import {
   differenceInMinutes,
   addDays,
   subWeeks,
+  parseISO,
 } from 'date-fns';
-import { fromZonedTime, toZonedTime, getTimezoneOffset } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 const TIME_ZONE = 'UTC'; // Use 'UTC' or your desired time zone
 
@@ -68,7 +69,7 @@ export function calculateHoursWorked(start, end) {
   const hours = Math.floor(minutesWorked / 60);
   const minutes = minutesWorked % 60;
 
-  const decimalMinutes = minutes / 100;
+  const decimalMinutes = minutes / 60;
   const totalHours = hours + decimalMinutes;
 
   return parseFloat(totalHours.toFixed(2));
@@ -93,11 +94,7 @@ export function formatDate(date) {
   return format(parsedDate, 'dd MMM');
 }
 
-/**
- * Get the start date of the week for a given date. Assumes the week starts on Monday.
- * @param {Date} date - The date for which to find the start of the week.
- * @returns {Date} - The start date of the week.
- */
+// Get the start date of the week for a given date. Assumes the week starts on Monday.
 export function getStartOfWeek(date) {
   const dayOfWeek = date.getDay();
   const distanceToMonday = (dayOfWeek + 6) % 7; // Calculate distance to Monday
@@ -138,4 +135,15 @@ export function convertMinutesToHours(totalMinutes) {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return { hours, minutes };
+}
+
+export function formatWeekRange(week) {
+  const startDate = new Date(week.start);
+  const endDate = new Date(week.end);
+  const options = { month: 'short', day: 'numeric' };
+
+  const formattedStart = startDate.toLocaleDateString('en-GB', options);
+  const formattedEnd = endDate.toLocaleDateString('en-GB', options);
+
+  return `${formattedStart} - ${formattedEnd}`;
 }

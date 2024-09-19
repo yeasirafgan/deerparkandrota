@@ -34,6 +34,7 @@ const AdminPage = async () => {
   await connectMongo();
 
   const timesheets = await Timesheet.find({}).sort({ date: 1 });
+  console.log('Timesheets:', timesheets);
 
   const lastFourWeeks = getLastFourWeeks();
   const previousWeek = getPreviousWeek(new Date());
@@ -76,6 +77,8 @@ const AdminPage = async () => {
 
     return acc;
   }, {});
+  console.log('Users Timesheets:', usersTimesheets);
+  console.log('Unique Date Ranges:', uniqueDateRanges);
 
   // Convert total minutes to hours and minutes for each user
   Object.values(usersTimesheets).forEach((user) => {
@@ -83,6 +86,7 @@ const AdminPage = async () => {
     user.totalHours = Math.floor(hours); // Rounding hours to integer
     user.totalMinutes = Math.round(minutes); // Rounding minutes to integer
   });
+  console.log('Final Data for Table:', Object.values(usersTimesheets));
 
   // Function to format hours and minutes based on conditions
   const formatTime = (hours, minutes) => {

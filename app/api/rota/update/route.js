@@ -1,4 +1,4 @@
-// app/api/rota/update/route.js
+// // app/api/rota/update/route.js
 
 import { NextResponse } from 'next/server';
 import connectMongo from '/db/connectMongo';
@@ -8,8 +8,12 @@ import mongoose from 'mongoose';
 export async function PATCH(request) {
   const { id, updates } = await request.json();
 
-  console.log('Rota ID to update:', id);
-  console.log('Updates:', updates);
+  if (!id || !updates) {
+    return NextResponse.json(
+      { error: 'ID and updates are required' },
+      { status: 400 }
+    );
+  }
 
   await connectMongo();
   const rota = await Rota.findById(id);
@@ -18,31 +22,16 @@ export async function PATCH(request) {
     return NextResponse.json({ error: 'Rota not found' }, { status: 404 });
   }
 
-  // Validate ObjectId for updates
-  if (
-    updates.uploadedBy &&
-    !mongoose.Types.ObjectId.isValid(updates.uploadedBy)
-  ) {
-    return NextResponse.json(
-      { error: 'Invalid uploadedBy ID' },
-      { status: 400 }
-    );
-  }
-
-  // Handle updates to parsedData
   if (updates.parsedData) {
     updates.parsedData.forEach((update, index) => {
       if (rota.parsedData[index]) {
-        // Update existing row
         Object.assign(rota.parsedData[index], update);
       } else {
-        // Add new row if it doesn't exist
         rota.parsedData.push(update);
       }
     });
   }
 
-  // Apply other updates
   Object.assign(rota, updates);
 
   const updatedRota = await rota.save();

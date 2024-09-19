@@ -1,4 +1,4 @@
-//app/api/rota/delete/route.js
+// //app/api/rota/delete/route.js
 
 import { NextResponse } from 'next/server';
 import connectMongo from '/db/connectMongo';
@@ -7,7 +7,9 @@ import Rota from '/models/Rota';
 export async function DELETE(request) {
   const { id } = await request.json();
 
-  console.log('Rota ID to delete:', id);
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  }
 
   await connectMongo();
   const deletedRota = await Rota.findByIdAndDelete(id);

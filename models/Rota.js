@@ -1,5 +1,4 @@
-// import mongoose from 'mongoose';
-// /path/to/rotaModel.js
+//models/Rota.js
 
 import mongoose from 'mongoose';
 

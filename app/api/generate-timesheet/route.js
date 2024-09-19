@@ -1,14 +1,25 @@
-// // // app/api/generate-timesheet/route.js
+// // app/api/generate-timesheet/route.js
 
 import { NextResponse } from 'next/server';
-import { exportToExcel } from '@/utils/exportsToExcel';
+import { generateExcelFile } from '@/utils/exportsToExcel';
+import {
+  fetchTimesheetData,
+  fetchTimesheetSummary,
+} from '@/utils/createExcelFile';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const type = searchParams.get('type') || 'detailed';
 
   try {
-    const buffer = await exportToExcel(type);
+    let data;
+    if (type === 'summary') {
+      data = await fetchTimesheetSummary(); // Fetch summary data
+    } else {
+      data = await fetchTimesheetData(); // Fetch detailed timesheet data
+    }
+
+    const buffer = await generateExcelFile(data, type);
 
     return new NextResponse(buffer, {
       headers: {

@@ -26,11 +26,11 @@ const navLinks = [
     label: 'Admin',
     requiredPermissions: ['delete:timesheet'],
   },
-  // {
-  //   href: '/rota',
-  //   label: 'Rota',
-  //   requiredPermissions: ['create:rota'],
-  // },
+  {
+    href: '/rota',
+    label: 'Rota',
+    // requiredPermissions: ['create:rota'],
+  },
 ];
 
 const Header = () => {
