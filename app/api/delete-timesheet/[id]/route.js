@@ -1,4 +1,4 @@
-// //mainfolder/app/api/delete-timesheet/[id]/route.js
+//app/api/delete-timesheet/[id]/route.js
 
 import { NextResponse } from 'next/server';
 import connectMongo from '@/db/connectMongo';

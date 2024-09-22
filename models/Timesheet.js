@@ -1,4 +1,4 @@
-// mainfolder/models/Timesheet.js
+//models/Timesheet.js
 
 import mongoose from 'mongoose';
 const timesheetSchema = new mongoose.Schema({

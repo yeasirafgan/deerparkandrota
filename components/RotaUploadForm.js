@@ -1,4 +1,4 @@
-//components / RotaUploadForm.js;
+// //components / RotaUploadForm.js;
 
 'use client';
 
@@ -33,7 +33,7 @@ export default function RotaUploadForm({ onSubmit, isSubmitting }) {
       onSubmit={handleSubmit}
       className='bg-white shadow-lg rounded-lg p-6 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto'
     >
-      <input type='hidden' name='uploadedBy' value='{USER_ID}' />
+      {/* <input type='hidden' name='uploadedBy' value='{USER_ID}' /> */}
 
       <div className='flex flex-col'>
         <label
@@ -45,7 +45,6 @@ export default function RotaUploadForm({ onSubmit, isSubmitting }) {
         <input
           id='rotaName'
           type='text'
-          name='rotaName'
           placeholder='Rota Name'
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -63,7 +62,6 @@ export default function RotaUploadForm({ onSubmit, isSubmitting }) {
         <input
           id='weekStart'
           type='date'
-          name='weekStart'
           value={weekStart}
           onChange={(e) => setWeekStart(e.target.value)}
           className='border border-gray-300 rounded-lg p-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
@@ -80,8 +78,7 @@ export default function RotaUploadForm({ onSubmit, isSubmitting }) {
         <input
           id='fileUpload'
           type='file'
-          name='file'
-          accept='.xlsx'
+          accept='.xls,.xlsx'
           onChange={handleFileChange}
           className='border border-gray-300 rounded-lg p-3 text-gray-800 file:py-2 file:px-3 file:border-0 file:bg-blue-50 file:text-blue-700 file:font-medium file:rounded-lg hover:file:bg-blue-100'
         />

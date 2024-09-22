@@ -10,6 +10,7 @@ import Link from 'next/link';
 
 export default function RotaPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shouldRefresh, setShouldRefresh] = useState(false); // New state to trigger re-fetch
   const router = useRouter();
 
   async function handleUpload(formData) {
@@ -22,7 +23,7 @@ export default function RotaPage() {
 
       const result = await response.json();
       if (response.ok) {
-        router.refresh(); // Refresh the page to reflect changes
+        setShouldRefresh((prev) => !prev); // Trigger re-fetch
       } else {
         console.error('Error response:', result);
       }
@@ -50,11 +51,12 @@ export default function RotaPage() {
 
         {/* Rota List */}
         <div className='w-full'>
-          <RotaList userRole='admin' />
+          <RotaList userRole='admin' shouldRefresh={shouldRefresh} />{' '}
+          {/* Pass the refresh state */}
         </div>
       </div>
 
-      {/* Go Back Button */}
+      {/* Go Back Button
       <div className='flex justify-end items-center mt-4 pr-6'>
         <Link
           href={'/admin'}
@@ -62,7 +64,7 @@ export default function RotaPage() {
         >
           Go Back
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

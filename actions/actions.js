@@ -1,4 +1,4 @@
-// //mainfolder/actions/actions.js
+//actions/actions.js
 
 'use server';
 

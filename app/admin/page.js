@@ -1,4 +1,4 @@
-// mainfolder/app/admin/page.js
+//app/admin/page.js
 
 export const metadata = {
   title: 'Admin page',

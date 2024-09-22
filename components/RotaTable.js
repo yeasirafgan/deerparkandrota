@@ -1,28 +1,34 @@
-//components/RotaTable.js
+// //components/RotaTable.js
 
 'use client';
-
 import { useState } from 'react';
 
 export default function RotaTable({ data, onUpdate }) {
   const [editingRow, setEditingRow] = useState(null);
   const [updatedData, setUpdatedData] = useState({});
 
+  // Set editing mode
   const handleEditClick = (rowIndex) => {
     setEditingRow(rowIndex);
-    setUpdatedData(data[rowIndex]);
+    setUpdatedData(data[rowIndex]); // Set initial row data for editing
   };
 
+  // Handle input changes in the table
   const handleInputChange = (e, field) => {
-    setUpdatedData({
-      ...updatedData,
+    setUpdatedData((prevData) => ({
+      ...prevData,
       [field]: e.target.value,
-    });
+    }));
   };
 
+  // Save the edited data and send it back to the parent
   const handleSaveClick = () => {
-    onUpdate({ [editingRow]: updatedData });
-    setEditingRow(null);
+    if (onUpdate) {
+      const updatedRota = [...data]; // Clone the current data
+      updatedRota[editingRow] = updatedData; // Apply the edits to the correct row
+      onUpdate(updatedRota); // Send updated rota back to parent
+    }
+    setEditingRow(null); // Exit editing mode
   };
 
   return (
@@ -30,59 +36,37 @@ export default function RotaTable({ data, onUpdate }) {
       <table className='min-w-full divide-y divide-gray-200'>
         <thead>
           <tr>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Staff
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Post
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Description
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Monday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Tuesday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Wednesday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Thursday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Friday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Saturday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Sunday
-            </th>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-              Actions
-            </th>
+            <th>Staff</th>
+            <th>Post</th>
+            <th>Description</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody className='bg-white divide-y divide-gray-200'>
           {data.map((row, index) => (
             <tr key={index}>
               {Object.keys(row).map((key) => (
-                <td key={key} className='px-6 py-4 whitespace-nowrap'>
+                <td key={key} className='px-6 py-4'>
                   {editingRow === index ? (
                     <input
                       type='text'
-                      value={updatedData[key]}
+                      value={updatedData[key] || ''} // Show the current editing data
                       onChange={(e) => handleInputChange(e, key)}
                       className='w-full px-3 py-1 border border-gray-300 rounded-md'
                     />
                   ) : (
-                    updatedData[key] || 'N/A'
+                    row[key] || 'N/A' // Display original data when not editing
                   )}
                 </td>
               ))}
-              <td className='px-6 py-4 whitespace-nowrap'>
+              <td>
                 {editingRow === index ? (
                   <button
                     onClick={handleSaveClick}

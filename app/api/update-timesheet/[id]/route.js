@@ -1,4 +1,4 @@
-// // mainfolder/app/api/update-timesheet/[id]/route.js
+//app/api/update-timesheet/[id]/route.js
 
 import { NextResponse } from 'next/server';
 import connectMongo from '@/db/connectMongo';

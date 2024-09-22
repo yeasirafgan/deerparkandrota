@@ -1,4 +1,4 @@
-// mainfolder/utils/timesheetUtils.js
+//utils/timesheetUtils.js
 
 import {
   getLastFourWeeks,

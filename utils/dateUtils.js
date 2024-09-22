@@ -1,4 +1,4 @@
-// //mainfolder/utils/dateUtils.js
+//utils/dateUtils.js
 
 import {
   startOfWeek,
