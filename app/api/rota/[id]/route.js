@@ -1,7 +1,6 @@
-// // app/api/rota/[id]/route.js
-
-import connectMongo from '/db/connectMongo';
-import Rota from '/models/Rota';
+import connectMongo from '@/db/connectMongo';
+import Rota from '@/models/Rota';
+import { NextResponse } from 'next/server';
 
 export async function GET(req, { params }) {
   const { id } = params;
@@ -11,27 +10,15 @@ export async function GET(req, { params }) {
     const rota = await Rota.findById(id);
 
     if (!rota) {
-      return new Response(JSON.stringify({ message: 'Rota not found.' }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      return NextResponse.json({ message: 'Rota not found.' }, { status: 404 });
     }
 
-    return new Response(JSON.stringify(rota), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json(rota);
   } catch (error) {
     console.error('Error message:', error.message);
-    return new Response(JSON.stringify({ message: 'Error fetching rota.' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json(
+      { message: 'Error fetching rota.' },
+      { status: 500 }
+    );
   }
 }
