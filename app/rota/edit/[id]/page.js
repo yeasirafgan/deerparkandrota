@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react';
 export default function EditRota({ params }) {
   const [rota, setRota] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { getAccessToken } = useKindeBrowserClient();
+  const { getPermission } = useKindeBrowserClient();
   const [error, setError] = useState(null);
   const router = useRouter();
   const rotaId = params.id;
-  const token = getAccessToken();
+  const requiredPermission = getPermission('delete:timesheet');
 
   useEffect(() => {
     async function fetchRota() {
@@ -71,10 +71,10 @@ export default function EditRota({ params }) {
   }
 
   useEffect(() => {
-    if (!token?.roles?.find((x) => x.key === 'admin')) {
+    if (!requiredPermission?.isGranted) {
       redirect('/timesheet');
     }
-  }, [token, router]);
+  }, [requiredPermission]);
 
   if (!rota) return <div>Loading...</div>;
 

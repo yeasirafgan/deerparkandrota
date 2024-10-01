@@ -115,8 +115,8 @@ export default function RotaList({ shouldRefresh }) {
   const [rotas, setRotas] = useState([]);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const { getAccessToken } = useKindeBrowserClient();
-  const token = getAccessToken();
+  const { getPermission } = useKindeBrowserClient();
+  const requiredPermission = getPermission('delete:timesheet');
 
   useEffect(() => {
     const fetchRotas = async () => {
@@ -140,8 +140,8 @@ export default function RotaList({ shouldRefresh }) {
   }, [shouldRefresh]); // Fetch when shouldRefresh changes
 
   useEffect(() => {
-    setIsAdmin(token?.roles?.find((x) => x.key === 'admin'));
-  }, [token]);
+    setIsAdmin(requiredPermission?.isGranted);
+  }, [requiredPermission]);
 
   async function handleDelete(id) {
     try {

@@ -2,16 +2,15 @@
 
 import RotaList from '@/components/RotaList';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
-import { redirect, useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import RotaUploadForm from '/components/RotaUploadForm';
 
 export default function RotaPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false); // New state to trigger re-fetch
-  const { getAccessToken } = useKindeBrowserClient();
-  const token = getAccessToken();
-  const router = useRouter();
+  const { getPermission } = useKindeBrowserClient();
+  const requiredPermission = getPermission('delete:timesheet');
 
   async function handleUpload(formData) {
     setIsSubmitting(true);
@@ -35,10 +34,10 @@ export default function RotaPage() {
   }
 
   useEffect(() => {
-    if (!token?.roles?.find((x) => x.key === 'admin')) {
+    if (!requiredPermission?.isGranted) {
       redirect('/timesheet');
     }
-  }, [token, router]);
+  }, [requiredPermission]);
 
   return (
     <div className='min-h-screen bg-gray-100 p-6'>
