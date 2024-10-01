@@ -1,8 +1,7 @@
-// // // app/rota/edit/[id]/page.js
-
 'use client';
-import { useState, useEffect } from 'react';
+
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EditRota({ params }) {
   const [rota, setRota] = useState(null);
@@ -14,7 +13,9 @@ export default function EditRota({ params }) {
   useEffect(() => {
     async function fetchRota() {
       try {
-        const response = await fetch(`/api/rota/${rotaId}`);
+        const response = await fetch(`/api/rota/${rotaId}`, {
+          cache: 'no-cache',
+        });
         if (!response.ok) throw new Error('Failed to fetch rota');
         const data = await response.json();
         setRota(data);

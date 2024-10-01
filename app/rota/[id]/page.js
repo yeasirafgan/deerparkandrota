@@ -1,13 +1,9 @@
-//app/rota/[id]/page.js
-
 export default async function RotaDetailsPage({ params }) {
   const { id } = params;
 
   // Fetch rota details on the server side
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/rota/${id}`
-  );
-
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/rota/${id}`;
+  const response = await fetch(url, { cache: 'no-cache' });
   const data = await response.json();
 
   if (!data || !Array.isArray(data.parsedData)) {

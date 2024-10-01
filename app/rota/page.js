@@ -1,12 +1,9 @@
-// app/rota/page.js
-
 'use client';
 
+import RotaList from '@/components/RotaList';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import RotaUploadForm from '/components/RotaUploadForm';
-import RotaList from '/components/RotaList';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 export default function RotaPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
