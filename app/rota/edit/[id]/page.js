@@ -1,14 +1,17 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { redirect, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function EditRota({ params }) {
   const [rota, setRota] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { getAccessToken } = useKindeBrowserClient();
   const [error, setError] = useState(null);
   const router = useRouter();
   const rotaId = params.id;
+  const token = getAccessToken();
 
   useEffect(() => {
     async function fetchRota() {
@@ -66,6 +69,12 @@ export default function EditRota({ params }) {
       };
     });
   }
+
+  useEffect(() => {
+    if (!token?.roles?.find((x) => x.key === 'admin')) {
+      redirect('/timesheet');
+    }
+  }, [token, router]);
 
   if (!rota) return <div>Loading...</div>;
 

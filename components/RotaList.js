@@ -107,12 +107,16 @@
 // }
 
 'use client';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function RotaList({ shouldRefresh }) {
   const [rotas, setRotas] = useState([]);
   const [error, setError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { getAccessToken } = useKindeBrowserClient();
+  const token = getAccessToken();
 
   useEffect(() => {
     const fetchRotas = async () => {
@@ -134,6 +138,10 @@ export default function RotaList({ shouldRefresh }) {
 
     fetchRotas();
   }, [shouldRefresh]); // Fetch when shouldRefresh changes
+
+  useEffect(() => {
+    setIsAdmin(token?.roles?.find((x) => x.key === 'admin'));
+  }, [token]);
 
   async function handleDelete(id) {
     try {
@@ -182,18 +190,23 @@ export default function RotaList({ shouldRefresh }) {
                   >
                     View
                   </Link>
-                  <Link
-                    href={`/rota/edit/${rota._id}`} // Edit button link
-                    className='text-blue-800 font-semibold hover:text-blue-600'
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(rota._id)}
-                    className='text-red-800 font-semibold hover:text-red-600'
-                  >
-                    Delete
-                  </button>
+
+                  {isAdmin && (
+                    <>
+                      <Link
+                        href={`/rota/edit/${rota._id}`} // Edit button link
+                        className='text-blue-800 font-semibold hover:text-blue-600'
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(rota._id)}
+                        className='text-red-800 font-semibold hover:text-red-600'
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

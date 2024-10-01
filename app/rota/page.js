@@ -1,13 +1,16 @@
 'use client';
 
 import RotaList from '@/components/RotaList';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { redirect, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import RotaUploadForm from '/components/RotaUploadForm';
 
 export default function RotaPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false); // New state to trigger re-fetch
+  const { getAccessToken } = useKindeBrowserClient();
+  const token = getAccessToken();
   const router = useRouter();
 
   async function handleUpload(formData) {
@@ -30,6 +33,12 @@ export default function RotaPage() {
       setIsSubmitting(false);
     }
   }
+
+  useEffect(() => {
+    if (!token?.roles?.find((x) => x.key === 'admin')) {
+      redirect('/timesheet');
+    }
+  }, [token, router]);
 
   return (
     <div className='min-h-screen bg-gray-100 p-6'>
