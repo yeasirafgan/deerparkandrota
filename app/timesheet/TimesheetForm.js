@@ -1,21 +1,27 @@
-//app/timesheet/TimesheetForm.js
-
 'use client';
 
-import React, { useState } from 'react';
+import { enGB } from 'date-fns/locale';
+import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { enGB } from 'date-fns/locale'; // Import English locale
 
 const TimesheetForm = ({ onSubmit, username }) => {
   const [formData, setFormData] = useState({
-    date: new Date(), // Set the initial date to today's date
+    date: new Date(),
     start: '',
     end: '',
   });
+  const [maxTime, setMaxTime] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+
+  useEffect(() => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    setMaxTime(`${hours}:${minutes}`);
+  }, []);
 
   // Handle input field changes
   const handleChange = (e) => {
@@ -88,6 +94,7 @@ const TimesheetForm = ({ onSubmit, username }) => {
           popperClassName='react-datepicker-popper'
           calendarClassName='react-datepicker-custom'
           locale={enGB} // Ensure week starts on Monday using enGB locale
+          maxDate={new Date()}
         />
       </div>
 
@@ -105,6 +112,7 @@ const TimesheetForm = ({ onSubmit, username }) => {
             value={formData.start} // Bind start time to form data
             onChange={handleChange}
             className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-700 sm:text-sm'
+            max={maxTime}
             required
           />
         </div>
@@ -121,6 +129,7 @@ const TimesheetForm = ({ onSubmit, username }) => {
             value={formData.end} // Bind end time to form data
             onChange={handleChange}
             className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-700 sm:text-sm'
+            max={maxTime}
             required
           />
         </div>
