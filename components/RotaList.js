@@ -115,8 +115,7 @@ export default function RotaList({ shouldRefresh }) {
   const [rotas, setRotas] = useState([]);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const { getPermission } = useKindeBrowserClient();
-  const requiredPermission = getPermission('delete:timesheet');
+  const { getPermission, isLoading } = useKindeBrowserClient();
 
   useEffect(() => {
     const fetchRotas = async () => {
@@ -137,11 +136,7 @@ export default function RotaList({ shouldRefresh }) {
     };
 
     fetchRotas();
-  }, [shouldRefresh]); // Fetch when shouldRefresh changes
-
-  useEffect(() => {
-    setIsAdmin(requiredPermission?.isGranted);
-  }, [requiredPermission]);
+  }, [shouldRefresh]);
 
   async function handleDelete(id) {
     try {
@@ -164,6 +159,15 @@ export default function RotaList({ shouldRefresh }) {
       setError('Failed to delete rota.');
     }
   }
+
+  useEffect(() => {
+    if (!isLoading) {
+      const havePermission = getPermission('delete:timesheet');
+      setIsAdmin(havePermission?.isGranted);
+    }
+  }, [getPermission, isLoading]);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className='p-6 bg-slate-100'>

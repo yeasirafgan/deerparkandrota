@@ -9,8 +9,7 @@ import RotaUploadForm from '/components/RotaUploadForm';
 export default function RotaPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false); // New state to trigger re-fetch
-  const { getPermission } = useKindeBrowserClient();
-  const requiredPermission = getPermission('delete:timesheet');
+  const { getPermission, isLoading } = useKindeBrowserClient();
 
   async function handleUpload(formData) {
     setIsSubmitting(true);
@@ -34,10 +33,15 @@ export default function RotaPage() {
   }
 
   useEffect(() => {
-    if (!requiredPermission?.isGranted) {
-      redirect('/timesheet');
+    if (!isLoading) {
+      const havePermission = getPermission('delete:timesheet');
+      if (!havePermission?.isGranted) {
+        redirect('/api/auth/login?post_login_redirect_url=/rota');
+      }
     }
-  }, [requiredPermission]);
+  }, [getPermission, isLoading]);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className='min-h-screen bg-gray-100 p-6'>

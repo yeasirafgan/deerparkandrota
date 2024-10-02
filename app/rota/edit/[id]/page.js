@@ -7,14 +7,13 @@ import { useEffect, useState } from 'react';
 export default function EditRota({ params }) {
   const [rota, setRota] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { getPermission } = useKindeBrowserClient();
+  const { getPermission, isLoading } = useKindeBrowserClient();
   const [error, setError] = useState(null);
   const router = useRouter();
   const rotaId = params.id;
-  const requiredPermission = getPermission('delete:timesheet');
 
   useEffect(() => {
-    async function fetchRota() {
+    (async function () {
       try {
         const response = await fetch(`/api/rota/${rotaId}`, {
           cache: 'no-cache',
@@ -26,9 +25,7 @@ export default function EditRota({ params }) {
         console.error('Failed to fetch rota', error);
         setError('Failed to load rota data.');
       }
-    }
-
-    fetchRota();
+    })();
   }, [rotaId]);
 
   async function handleSubmit(event) {
@@ -71,12 +68,15 @@ export default function EditRota({ params }) {
   }
 
   useEffect(() => {
-    if (!requiredPermission?.isGranted) {
-      redirect('/timesheet');
+    if (!isLoading) {
+      const havePermission = getPermission('delete:timesheet');
+      if (!havePermission?.isGranted) {
+        redirect(`/api/auth/login?post_login_redirect_url=/rota/${rotaId}`);
+      }
     }
-  }, [requiredPermission]);
+  }, [getPermission, isLoading, rotaId]);
 
-  if (!rota) return <div>Loading...</div>;
+  if (!rota || isLoading) return <div>Loading...</div>;
 
   return (
     <div className='p-6 bg-white shadow-lg rounded-lg'>
