@@ -1,30 +1,49 @@
 // app/admin/[username]/page.js
 
+'use client';
+
 import DeleteButton from '@/components/DeleteButton';
 import EditButton from '@/components/EditButton';
-import connectMongo from '@/db/connectMongo';
-import Timesheet from '@/models/Timesheet';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { parseISO, format, subWeeks, startOfDay } from 'date-fns';
+import Pagination from 'rc-pagination';
 import {
   calculateHoursWorked,
   calculateMinutesWorked,
-  convertMinutesToHours,
-} from '@/utils/dateUtils'; // Ensure these utility functions exist and work correctly
-import Link from 'next/link';
-import { parseISO, format, subWeeks, startOfDay } from 'date-fns';
+} from '@/utils/dateUtils';
 
-export const metadata = {
-  title: 'Staff details',
-  description: 'Simple timesheet app for Deerpark staffs',
-};
-
-const UserDetailPage = async ({ params }) => {
+const UserDetailPage = ({ params }) => {
   const username = decodeURIComponent(params.username);
+  const [timesheets, setTimesheets] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalHours, setTotalHours] = useState(0);
+  const [totalMinutes, setTotalMinutes] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const limit = 10; // Limit of timesheets per page
 
-  // Connect to MongoDB
-  await connectMongo();
+  const fetchTimesheets = async (page) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/timesheets/${username}?page=${page}&limit=${limit}`
+      );
+      const data = await res.json();
+      setTimesheets(data.timesheets);
+      setTotalPages(Math.ceil(data.totalCount / limit));
+      setTotalHours(data.totalHours);
+      setTotalMinutes(data.totalMinutes);
+    } catch (error) {
+      console.error('Failed to fetch timesheets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Fetch timesheets sorted by date in ascending order (oldest first)
-  const timesheets = await Timesheet.find({ username }).sort({ date: 1 });
+  useEffect(() => {
+    fetchTimesheets(page);
+  }, [page, username]);
 
   // Function to format the date
   const formatDate = (dateString) => {
@@ -33,35 +52,19 @@ const UserDetailPage = async ({ params }) => {
     return format(date, 'dd MMM yy EE'); // Format as "01 Aug 24 Thu"
   };
 
-  // Calculate total hours worked for the last four weeks
-  const today = new Date();
-  const fourWeeksAgo = subWeeks(startOfDay(today), 4); // 4 weeks back
-
-  // Filter timesheets for the last four weeks
-  const lastFourWeeksTimesheets = timesheets.filter((timesheet) => {
-    const date =
-      typeof timesheet.date === 'string'
-        ? parseISO(timesheet.date)
-        : timesheet.date;
-    return date >= fourWeeksAgo;
-  });
-
-  // Calculate total minutes worked for the last four weeks
-  const totalMinutes = lastFourWeeksTimesheets.reduce((acc, timesheet) => {
-    const minutesWorked = calculateMinutesWorked(
-      timesheet.start,
-      timesheet.end
-    );
-    return acc + minutesWorked;
-  }, 0);
-
-  // Convert total minutes to hours and minutes
-  const { hours, minutes } = convertMinutesToHours(totalMinutes);
-
-  // Function to format hours and minutes
+  // Function to format hours and minutes for display
   const formatTime = (hours, minutes) => {
-    return minutes === 0 ? `${hours} hrs` : `${hours} hrs ${minutes} mins`;
+    return minutes === 0
+      ? `${parseInt(hours)} hrs`
+      : `${parseInt(hours)} hrs ${parseInt(minutes)} mins`;
   };
+
+  // // Calculate total hours and minutes for the displayed timesheets
+  // const totalMinutes = timesheets.reduce((acc, timesheet) => {
+  //   return acc + calculateMinutesWorked(timesheet.start, timesheet.end);
+  // }, 0);
+
+  // const { hours, minutes } = convertMinutesToHours(totalMinutes);
 
   return (
     <main className='p-4 sm:p-8'>
@@ -82,72 +85,89 @@ const UserDetailPage = async ({ params }) => {
       <h1 className='text-md sm:text-lg font-semibold mb-4 text-lime-800 hover:text-emerald-950 text-center sm:text-left'>
         {`${username}'s work.`}
       </h1>
-      <div className='overflow-x-auto'>
-        <table className='min-w-full bg-white border border-gray-200'>
-          <thead className='bg-gray-100'>
-            <tr>
-              <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-                Date
-              </th>
-              <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-                Start
-              </th>
-              <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-                End
-              </th>
-              <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-                Hours Worked
-              </th>
-              <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {lastFourWeeksTimesheets.map((timesheet) => (
-              <tr key={timesheet._id.toString()} className='hover:bg-gray-50'>
-                <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900 font-semibold'>
-                  {formatDate(timesheet.date)}
+      {loading ? (
+        <div className='text-center'>Loading...</div>
+      ) : (
+        <div className='overflow-x-auto'>
+          <table className='min-w-full bg-white border border-gray-200'>
+            <thead className='bg-gray-100'>
+              <tr>
+                <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                  Date
+                </th>
+                <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                  Start
+                </th>
+                <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                  End
+                </th>
+                <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                  Hours Worked
+                </th>
+                <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {timesheets.map((timesheet) => (
+                <tr key={timesheet._id.toString()} className='hover:bg-gray-50'>
+                  <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900 font-semibold'>
+                    {formatDate(timesheet.date)}
+                  </td>
+                  <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900'>
+                    {timesheet.start}
+                  </td>
+                  <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900'>
+                    {timesheet.end}
+                  </td>
+                  <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900 font-bold'>
+                    {formatTime(
+                      Math.floor(
+                        calculateHoursWorked(timesheet.start, timesheet.end)
+                      ),
+                      calculateMinutesWorked(timesheet.start, timesheet.end) %
+                        60
+                    )}
+                  </td>
+                  <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-lime-800 hover:text-emerald-950 flex gap-2'>
+                    <EditButton id={timesheet._id.toString()} />
+                    <DeleteButton id={timesheet._id.toString()} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td
+                  className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900 font-extrabold'
+                  colSpan='3'
+                >
+                  Total Hours (Last 4 Weeks)
                 </td>
-                <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900'>
-                  {timesheet.start}
-                </td>
-                <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900'>
-                  {timesheet.end}
-                </td>
-                <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900 font-bold'>
-                  {formatTime(
-                    Math.floor(
-                      calculateHoursWorked(timesheet.start, timesheet.end)
-                    ),
-                    calculateMinutesWorked(timesheet.start, timesheet.end) % 60
-                  )}
-                </td>
-                <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-lime-800 hover:text-emerald-950 flex gap-2'>
-                  <EditButton id={timesheet._id.toString()} />
-                  <DeleteButton id={timesheet._id.toString()} />
+                <td
+                  className='border border-gray-300 px-2 py-1 text-left text-slate-950 hover:text-emerald-900 font-extrabold text-xs sm:text-sm'
+                  colSpan='2'
+                >
+                  {formatTime(totalHours, totalMinutes)}
                 </td>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td
-                className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm text-slate-700 hover:text-emerald-900 font-extrabold'
-                colSpan='3'
-              >
-                Total Hours (Last 4 Weeks)
-              </td>
-              <td
-                className='border border-gray-300 px-2 py-1 text-left text-slate-950 hover:text-emerald-900 font-extrabold text-xs sm:text-sm'
-                colSpan='2'
-              >
-                {formatTime(hours, minutes)}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+            </tfoot>
+          </table>
+        </div>
+      )}
+      {/* Pagination Controls */}{' '}
+      {timesheets.length > 0 && (
+        <div className='mt-4 flex justify-center'>
+          <Pagination
+            current={page}
+            total={totalPages * limit} // Total count of items (timesheets)
+            pageSize={limit} // Items per page
+            onChange={(page) => setPage(page)} // Update page state on change
+            className='pagination'
+          />
+        </div>
+      )}
     </main>
   );
 };
