@@ -70,7 +70,7 @@ const UserDetailPage = ({ params }) => {
     <main className='p-4 sm:p-8'>
       <div className='flex justify-end gap-2 mb-4'>
         <Link
-          href='/api/generate-timesheet?type=detailed'
+          href={`/api/export-timesheets/${username}`}
           className='px-3 py-1 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
         >
           Export Details
