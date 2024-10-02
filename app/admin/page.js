@@ -34,7 +34,6 @@ const AdminPage = async () => {
   await connectMongo();
 
   const timesheets = await Timesheet.find({}).sort({ date: 1 });
-  console.log('Timesheets:', timesheets);
 
   const lastFourWeeks = getLastFourWeeks();
   const previousWeek = getPreviousWeek(new Date());
@@ -111,7 +110,8 @@ const AdminPage = async () => {
           Go to Rota page
         </Link>
         <Link
-          href='/api/generate-timesheet?type=summary'
+          // href='/api/generate-timesheet?type=summary'
+          href='/api/generate-timesheets/list'
           className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
         >
           Export to Excel
