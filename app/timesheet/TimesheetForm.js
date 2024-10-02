@@ -112,7 +112,7 @@ const TimesheetForm = ({ onSubmit, username }) => {
             value={formData.start} // Bind start time to form data
             onChange={handleChange}
             className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-700 sm:text-sm'
-            max={maxTime}
+            // max={maxTime}
             required
           />
         </div>
@@ -129,7 +129,7 @@ const TimesheetForm = ({ onSubmit, username }) => {
             value={formData.end} // Bind end time to form data
             onChange={handleChange}
             className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-700 sm:text-sm'
-            max={maxTime}
+            // max={maxTime}
             required
           />
         </div>
