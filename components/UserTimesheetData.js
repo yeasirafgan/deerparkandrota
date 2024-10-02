@@ -1,66 +1,74 @@
-// mainfolder / components / UserTimesheetData;
+'use client';
 
-import connectMongo from '@/db/connectMongo';
-import Timesheet from '@/models/Timesheet';
 import {
   calculateTotalMinutes,
   convertMinutesToHours,
 } from '@/utils/dateUtils';
+import Pagination from 'rc-pagination';
+import { useState, useEffect } from 'react';
 
-const UserTimesheetData = async ({ username }) => {
-  try {
-    // Establish MongoDB connection
-    await connectMongo();
+const UserTimesheetData = ({ username }) => {
+  const [timesheets, setTimesheets] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const limit = 10; // Limit of timesheets per page
 
-    // Define the time range (start and end of the week)
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - (today.getDay() || 7) + 1);
-    startOfWeek.setHours(0, 0, 0, 0);
+  const fetchTimesheets = async (page) => {
+    setIsLoading(true); // Set loading to true when fetching starts
+    try {
+      const res = await fetch(
+        `/api/timesheets?username=${username}&page=${page}&limit=${limit}`
+      );
+      const data = await res.json();
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+      setTimesheets(data.timesheets);
+      setTotalPages(Math.ceil(data.totalCount / limit));
+    } catch (error) {
+      console.error('Failed to fetch timesheets:', error);
+    } finally {
+      setIsLoading(false); // Set loading to false after fetching completes
+    }
+  };
 
-    // Fetch timesheets for the current week, sorted by date
-    const timesheets = await Timesheet.find({
-      username,
-      date: {
-        $gte: startOfWeek,
-        $lte: endOfWeek,
-      },
-    }).sort({ date: -1 });
+  useEffect(() => {
+    fetchTimesheets(page);
+  }, [page]);
 
-    // Calculate total minutes worked this week
-    const totalMinutes = calculateTotalMinutes(timesheets);
-    const { hours: totalHours, minutes: remainingMinutes } =
-      convertMinutesToHours(totalMinutes);
+  // Helper function: Format date as "17 Aug 24"
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: '2-digit',
+    }).format(date);
+  };
 
-    // Helper function: Format date as "17 Aug 24"
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: '2-digit',
-      }).format(date);
-    };
+  // Helper function: Format hours and minutes for display
+  const formatTime = (hours, minutes) => {
+    if (minutes === 0) {
+      return `${hours} hrs`;
+    } else {
+      return `${hours} hrs ${minutes} mins`;
+    }
+  };
 
-    // Helper function: Format hours and minutes for display
-    const formatTime = (hours, minutes) => {
-      if (minutes === 0) {
-        return `${hours} hrs`;
-      } else {
-        return `${hours} hrs ${minutes} mins`;
-      }
-    };
+  // Calculate total minutes worked this week
+  const totalMinutes = calculateTotalMinutes(timesheets);
+  const { hours: totalHours, minutes: remainingMinutes } =
+    convertMinutesToHours(totalMinutes);
 
-    // JSX rendering the table with timesheet data
-    return (
-      <div className='p-4 sm:p-5'>
-        <h2 className='text-xl md:text-lg font-semibold mb-3 sm:mb-4 text-center sm:text-left text-slate-700'>
-          {`${username}'s latest work`}
-        </h2>
+  return (
+    <div className='p-4 sm:p-5'>
+      <h2 className='text-xl md:text-lg font-semibold mb-3 sm:mb-4 text-center sm:text-left text-slate-700'>
+        {`${username}'s latest work`}
+      </h2>
+
+      {/* Display loading state */}
+      {isLoading ? (
+        <div className='text-center'>Loading timesheets...</div>
+      ) : (
         <div className='overflow-x-auto rounded-md'>
           <table className='min-w-full bg-white border text-xs sm:text-sm'>
             <thead>
@@ -111,17 +119,22 @@ const UserTimesheetData = async ({ username }) => {
             </tfoot>
           </table>
         </div>
-      </div>
-    );
-  } catch (error) {
-    console.error('Failed to fetch timesheets:', error);
-    // Return error message inside the JSX
-    return (
-      <div className='text-red-500'>
-        Error loading timesheets. Please try again later.
-      </div>
-    );
-  }
+      )}
+
+      {/* Pagination Controls */}
+      {timesheets.length > 0 && (
+        <div className='mt-4 flex justify-center'>
+          <Pagination
+            current={page}
+            total={totalPages * limit} // total count of items (timesheets)
+            pageSize={limit} // items per page
+            onChange={(page) => setPage(page)} // update page state on change
+            className='pagination'
+          />
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default UserTimesheetData;
