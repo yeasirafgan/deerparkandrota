@@ -65,14 +65,12 @@ export async function GET(request) {
   // Add headers in the specified order
   const headers = [
     'Username',
-    ...lastFourWeeks
-      .map(
-        (range) =>
-          `${formatDate(new Date(range.start))} - ${formatDate(
-            new Date(range.end)
-          )}`
-      )
-      .reverse(),
+    ...lastFourWeeks.map(
+      (range) =>
+        `${formatDate(new Date(range.start))} - ${formatDate(
+          new Date(range.end)
+        )}`
+    ),
     'Total (4 Weeks)',
   ];
   sheet.addRow(headers);
@@ -90,7 +88,7 @@ export async function GET(request) {
     let totalMinutes = 0;
 
     // Reverse the order of the periods for data rows
-    lastFourWeeks.reverse().forEach((range) => {
+    lastFourWeeks.forEach((range) => {
       const periodKey = `${formatDate(new Date(range.start))} - ${formatDate(
         new Date(range.end)
       )}`;
