@@ -111,7 +111,7 @@ const AdminPage = async () => {
         </Link>
         <Link
           // href='/api/generate-timesheet?type=summary'
-          href='/api/generate-timesheets/list'
+          href='/api/generate-timesheet/list'
           className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
         >
           Export to Excel

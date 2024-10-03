@@ -77,6 +77,13 @@ export async function GET(request) {
   ];
   sheet.addRow(headers);
 
+  // Set column widths
+  sheet.columns = [
+    { header: 'Username', width: 20 }, // Adjust width for 'Username' column
+    ...lastFourWeeks.map(() => ({ width: 18 })), // Set width for each week column
+    { header: 'Total (4 Weeks)', width: 20 }, // Set width for 'Total' column
+  ];
+
   // Add timesheet data for each user in the specified order
   Object.values(usersTimesheets).forEach((user) => {
     const row = [user.username];

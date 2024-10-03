@@ -11,8 +11,6 @@ export async function GET(request, { params }) {
   const page = parseInt(url.searchParams.get('page')) || 1;
   const limit = parseInt(url.searchParams.get('limit')) || 10;
 
-  console.log(limit);
-
   // Connect to MongoDB
   await connectMongo();
 
@@ -36,54 +34,59 @@ export async function GET(request, { params }) {
     },
     {
       $addFields: {
-        startHours: {
-          $toInt: { $arrayElemAt: [{ $split: ['$start', ':'] }, 0] }, // Convert hours to integer
+        // Convert start and end time strings to Date objects
+        startTime: {
+          $dateFromString: {
+            dateString: {
+              $concat: [
+                { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
+                'T',
+                '$start', // HH:mm format
+              ],
+            },
+          },
         },
-        startMinutes: {
-          $toInt: { $arrayElemAt: [{ $split: ['$start', ':'] }, 1] }, // Convert minutes to integer
-        },
-        endHours: {
-          $toInt: { $arrayElemAt: [{ $split: ['$end', ':'] }, 0] }, // Convert hours to integer
-        },
-        endMinutes: {
-          $toInt: { $arrayElemAt: [{ $split: ['$end', ':'] }, 1] }, // Convert minutes to integer
+        endTime: {
+          $dateFromString: {
+            dateString: {
+              $concat: [
+                { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
+                'T',
+                '$end', // HH:mm format
+              ],
+            },
+          },
         },
       },
     },
     {
       $addFields: {
-        totalStartMinutes: {
-          $add: ['$startHours', { $divide: ['$startMinutes', 60] }], // Total start minutes
-        },
-        totalEndMinutes: {
-          $add: ['$endHours', { $divide: ['$endMinutes', 60] }], // Total end minutes
+        // Calculate the duration in minutes
+        durationMinutes: {
+          $cond: [
+            { $gte: ['$endTime', '$startTime'] },
+            { $divide: [{ $subtract: ['$endTime', '$startTime'] }, 1000 * 60] }, // If endTime >= startTime
+            {
+              $divide: [
+                { $subtract: [{ $add: ['$endTime', 86400000] }, '$startTime'] },
+                1000 * 60,
+              ],
+            }, // If endTime < startTime, assume next day
+          ],
         },
       },
     },
     {
       $group: {
         _id: null, // Group all records together
-        totalMinutes: {
-          $sum: {
-            $cond: [
-              { $gt: ['$totalEndMinutes', '$totalStartMinutes'] }, // If end time is greater than start time
-              { $subtract: ['$totalEndMinutes', '$totalStartMinutes'] },
-              {
-                $add: [
-                  { $subtract: ['$totalEndMinutes', '$totalStartMinutes'] },
-                  1440,
-                ],
-              }, // Assume the end time is on the next day
-            ],
-          },
-        },
+        totalMinutes: { $sum: '$durationMinutes' }, // Sum of all durations
         timesheets: { $push: '$$ROOT' }, // Push all timesheets to an array
       },
     },
     {
       $project: {
         _id: 0, // Exclude the _id field
-        totalMinutes: '$totalMinutes', // Total minutes worked
+        totalMinutes: 1, // Total minutes worked
         timesheets: { $slice: ['$timesheets', (page - 1) * limit, limit] }, // Apply pagination to timesheets
       },
     },
@@ -96,6 +99,7 @@ export async function GET(request, { params }) {
     return NextResponse.json({
       timesheets: [],
       totalCount: 0,
+      totalHours: 0,
       totalMinutes: 0,
     });
   }
@@ -103,13 +107,13 @@ export async function GET(request, { params }) {
   const { timesheets, totalMinutes } = result[0];
 
   // Convert total minutes to hours and minutes
-  const hours = Math.floor(totalMinutes / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
   return NextResponse.json({
     timesheets,
     totalCount,
-    totalHours: hours,
+    totalHours,
     totalMinutes: minutes,
   });
 }
