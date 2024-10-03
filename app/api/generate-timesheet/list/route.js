@@ -11,6 +11,8 @@ import ExcelJS from 'exceljs';
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
+  const searchParams = request.nextUrl.searchParams;
+
   // Connect to MongoDB
   await connectMongo();
 

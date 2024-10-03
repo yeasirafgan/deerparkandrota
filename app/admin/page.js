@@ -22,7 +22,8 @@ const AdminPage = async () => {
   const { isAuthenticated, getUser, getPermission } = getKindeServerSession();
 
   if (!(await isAuthenticated())) {
-    redirect('/api/auth/login?post_login_redirect_url=/admin');
+    // redirect('/api/auth/login?post_login_redirect_url=/admin');
+    redirect('/');
   }
 
   const requiredPermission = await getPermission('delete:timesheet');

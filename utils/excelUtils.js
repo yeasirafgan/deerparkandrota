@@ -37,7 +37,6 @@ export const parseExcelFile = async (fileBuffer) => {
     // Ensure to handle empty rows or initial rows properly
     const filteredData = jsonData.filter((item) => item.staff !== 'Unknown');
 
-    console.log('Parsed JSON Data:', filteredData); // Debugging line
     return filteredData;
   } catch (error) {
     console.error('Error parsing Excel file:', error);

@@ -1,14 +1,16 @@
 'use client';
 
-import RotaList from '@/components/RotaList';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import RotaUploadForm from '/components/RotaUploadForm';
+import dynamic from 'next/dynamic';
+
+const RotaList = dynamic(() => import('@/components/RotaList'), { ssr: false });
 
 export default function RotaPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [shouldRefresh, setShouldRefresh] = useState(false); // New state to trigger re-fetch
+  const [shouldRefresh, setShouldRefresh] = useState(false);
   const { getPermission, isLoading } = useKindeBrowserClient();
 
   async function handleUpload(formData) {
@@ -17,11 +19,12 @@ export default function RotaPage() {
       const response = await fetch('/api/rota/create', {
         method: 'POST',
         body: formData,
+        cache: 'no-cache',
       });
 
       const result = await response.json();
       if (response.ok) {
-        setShouldRefresh((prev) => !prev); // Trigger re-fetch
+        setShouldRefresh((prev) => !prev);
       } else {
         console.error('Error response:', result);
       }
@@ -36,7 +39,8 @@ export default function RotaPage() {
     if (!isLoading) {
       const havePermission = getPermission('delete:timesheet');
       if (!havePermission?.isGranted) {
-        redirect('/api/auth/login?post_login_redirect_url=/rota');
+        // redirect('/api/auth/login?post_login_redirect_url=/rota');
+        redirect('/');
       }
     }
   }, [getPermission, isLoading]);
@@ -46,10 +50,8 @@ export default function RotaPage() {
   return (
     <div className='min-h-screen bg-gray-100 p-6'>
       <div className='container mx-auto'>
-        {/* Heading */}
         <h1 className='text-2xl font-bold text-lime-900 mb-6'>Manage Rota</h1>
 
-        {/* Rota Upload Form */}
         <div className='w-full mb-6'>
           <RotaUploadForm
             onSubmit={handleUpload}
@@ -58,22 +60,10 @@ export default function RotaPage() {
           />
         </div>
 
-        {/* Rota List */}
         <div className='w-full'>
-          <RotaList userRole='admin' shouldRefresh={shouldRefresh} />{' '}
-          {/* Pass the refresh state */}
+          <RotaList shouldRefresh={shouldRefresh} userRole='admin' />
         </div>
       </div>
-
-      {/* Go Back Button
-      <div className='flex justify-end items-center mt-4 pr-6'>
-        <Link
-          href={'/admin'}
-          className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
-        >
-          Go Back
-        </Link>
-      </div> */}
     </div>
   );
 }
