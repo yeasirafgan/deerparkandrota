@@ -30,6 +30,17 @@ export default async function createTimesheet(formData) {
       throw new Error('Invalid date format');
     }
 
+    if (
+      await Timesheet.countDocuments({
+        userId,
+        date: { $eq: date },
+        start: workstart,
+        end: workend,
+      })
+    ) {
+      throw new Error('Time entry has already been logged for this period.');
+    }
+
     console.log(`Date Parsed: ${date}`);
     const { startDate, endDate } = getWeeklyPeriod(date);
 
@@ -56,8 +67,18 @@ export default async function createTimesheet(formData) {
     console.log(
       `Start: ${workstart}, End: ${workend}, Hours Worked: ${hoursWorked}`
     );
+
+    return {
+      status: 200,
+      message: 'Submitted successfully',
+    };
   } catch (error) {
     console.error('Error saving timesheet:', error);
     // Handle the error appropriately, e.g., by showing an error message
+
+    return {
+      status: 500,
+      message: error.message,
+    };
   }
 }
