@@ -25,7 +25,12 @@ const TimesheetPage = async ({ searchParams }) => {
 
   const handleSubmit = async (formData) => {
     'use server';
-    await createTimesheet(formData);
+    return await createTimesheet(formData);
+    // redirect('/timesheet');
+  };
+
+  const reloadData = async (formData) => {
+    'use server';
     redirect('/timesheet');
   };
 
@@ -37,7 +42,11 @@ const TimesheetPage = async ({ searchParams }) => {
             <h1 className='text-2xl font-semibold text-slate-800 mb-4'>
               Timesheet Entry
             </h1>
-            <TimesheetForm onSubmit={handleSubmit} username={username} />
+            <TimesheetForm
+              onSubmit={handleSubmit}
+              reloadData={reloadData}
+              username={username}
+            />
           </div>
 
           <div className='flex-1 bg-white shadow-md rounded-lg p-6'>

@@ -25,6 +25,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Container from '@/components/Container';
+import 'rc-pagination/assets/index.css';
 
 // Use next/font's Inter to manage font preloading
 const inter = Inter({ subsets: ['latin'], preload: false });

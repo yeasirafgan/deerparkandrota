@@ -1,20 +1,23 @@
-// // // app/rota/edit/[id]/page.js
-
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { redirect, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EditRota({ params }) {
   const [rota, setRota] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { getPermission, isLoading } = useKindeBrowserClient();
   const [error, setError] = useState(null);
   const router = useRouter();
   const rotaId = params.id;
 
   useEffect(() => {
-    async function fetchRota() {
+    (async function () {
       try {
-        const response = await fetch(`/api/rota/${rotaId}`);
+        const response = await fetch(`/api/rota/${rotaId}`, {
+          cache: 'no-cache',
+        });
         if (!response.ok) throw new Error('Failed to fetch rota');
         const data = await response.json();
         setRota(data);
@@ -22,9 +25,7 @@ export default function EditRota({ params }) {
         console.error('Failed to fetch rota', error);
         setError('Failed to load rota data.');
       }
-    }
-
-    fetchRota();
+    })();
   }, [rotaId]);
 
   async function handleSubmit(event) {
@@ -66,7 +67,16 @@ export default function EditRota({ params }) {
     });
   }
 
-  if (!rota) return <div>Loading...</div>;
+  useEffect(() => {
+    if (!isLoading) {
+      const havePermission = getPermission('delete:timesheet');
+      if (!havePermission?.isGranted) {
+        redirect(`/api/auth/login?post_login_redirect_url=/rota/${rotaId}`);
+      }
+    }
+  }, [getPermission, isLoading, rotaId]);
+
+  if (!rota || isLoading) return <div>Loading...</div>;
 
   return (
     <div className='p-6 bg-white shadow-lg rounded-lg'>

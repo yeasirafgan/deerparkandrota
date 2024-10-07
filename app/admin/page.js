@@ -22,7 +22,8 @@ const AdminPage = async () => {
   const { isAuthenticated, getUser, getPermission } = getKindeServerSession();
 
   if (!(await isAuthenticated())) {
-    redirect('/api/auth/login?post_login_redirect_url=/admin');
+    // redirect('/api/auth/login?post_login_redirect_url=/admin');
+    redirect('/');
   }
 
   const requiredPermission = await getPermission('delete:timesheet');
@@ -34,7 +35,6 @@ const AdminPage = async () => {
   await connectMongo();
 
   const timesheets = await Timesheet.find({}).sort({ date: 1 });
-  console.log('Timesheets:', timesheets);
 
   const lastFourWeeks = getLastFourWeeks();
   const previousWeek = getPreviousWeek(new Date());
@@ -111,7 +111,8 @@ const AdminPage = async () => {
           Go to Rota page
         </Link>
         <Link
-          href='/api/generate-timesheet?type=summary'
+          // href='/api/generate-timesheet?type=summary'
+          href='/api/generate-timesheet/list'
           className='px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white rounded text-xs sm:text-sm'
         >
           Export to Excel
