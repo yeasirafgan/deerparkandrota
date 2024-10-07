@@ -21,7 +21,7 @@ const UserDetailPage = ({ params }) => {
   const [totalHours, setTotalHours] = useState(0);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [loading, setLoading] = useState(true);
-  const limit = 10; // Limit of timesheets per page
+  const limit = 20; // Limit of timesheets per page
 
   const fetchTimesheets = async (page) => {
     setLoading(true);

@@ -137,7 +137,7 @@ const Header = () => {
                       alt='Profile picture'
                       width={30}
                       height={30}
-                      className='rounded-full'
+                      className='rounded-full border'
                     />
                   ) : (
                     <div className='h-10 w-10 rounded-full bg-zinc-800 text-white text-center flex justify-center items-center'>
@@ -145,6 +145,7 @@ const Header = () => {
                     </div>
                   )}
                 </div>
+                {console.log(user?.picture, 'SIFAT')}
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
@@ -160,7 +161,7 @@ const Header = () => {
                           alt='Profile picture'
                           width={40}
                           height={40}
-                          className='rounded-full'
+                          className='rounded-full border'
                         />
                       ) : (
                         <div className='h-10 w-10 rounded-full bg-zinc-800 text-white text-center flex justify-center items-center'>
@@ -228,7 +229,7 @@ const Header = () => {
                       alt='Profile picture'
                       width={60}
                       height={60}
-                      className='rounded-full'
+                      className='rounded-full border'
                     />
                   ) : (
                     <div className='h-12 w-12 rounded-full bg-zinc-800 text-white text-center flex justify-center items-center'>
