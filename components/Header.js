@@ -145,7 +145,6 @@ const Header = () => {
                     </div>
                   )}
                 </div>
-                {console.log(user?.picture, 'SIFAT')}
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
