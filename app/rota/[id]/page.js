@@ -12,7 +12,7 @@ export default function RotaDetailsPage({ params }) {
   useEffect(() => {
     const fetchRotaDetails = async () => {
       try {
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/rota/${id}`;
+        const url = `/api/rota/${id}`;
         const response = await fetch(url, { cache: 'no-cache' });
         const data = await response.json();
 
