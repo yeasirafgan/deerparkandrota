@@ -85,7 +85,7 @@ const Header = () => {
   };
 
   return (
-    <header className='relative flex flex-col md:flex-row justify-between items-center py-4 px-7 border-b'>
+    <header className='relative flex flex-col md:flex-row justify-between items-center py-4 px-7 border-b bg-slate-100 text-zinc-500'>
       <div className='flex justify-between items-center w-full md:w-auto'>
         <Link href={'/'}>
           <h1 className='text-xl font-semibold text-slate-700'>
@@ -191,18 +191,18 @@ const Header = () => {
         }}
       >
         <div
-          className={`fixed inset-y-0 right-0 bg-slate-700 shadow-lg md:hidden transform transition-transform duration-300 mt-20 rounded-s-3xl h-full ${
+          className={`fixed inset-y-0 right-0 bg-gradient-to-r from-slate-400 to-slate-200 shadow-lg md:hidden transform transition-transform duration-300 mt-20 rounded-s-3xl h-[88vh] ${
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           style={{ zIndex: 999 }}
         >
           <nav className='w-60 h-full flex flex-col '>
-            <div className='flex items-center justify-center px-4 py-3 border-b'>
-              <h2 className='text-xl p-1 font-semibold text-white'>
+            <div className='flex items-center justify-center px-4 py-3 border-b border-slate-300'>
+              <h2 className='text-xl p-1 font-semibold text-lime-100'>
                 Phoenix Carehome
               </h2>
               <button
-                className='text-slate-700 text-2xl pt-2'
+                className='text-slate-800 text-2xl'
                 onClick={closeMobileMenu} // Close mobile menu on click
               >
                 &times;
@@ -211,7 +211,7 @@ const Header = () => {
 
             {/* Profile Section */}
             {isAuthenticated ? (
-              <div className='w-full p-4 bg-slate-700'>
+              <div className='w-full p-4 bg-gradient-to-r from-slate-300 to-slate-400'>
                 <div
                   className='cursor-pointer flex items-center justify-center'
                   onClick={toggleDropdown}
@@ -226,7 +226,7 @@ const Header = () => {
                       className='rounded-full border'
                     />
                   ) : (
-                    <div className='h-12 w-12 rounded-full bg-zinc-800 text-white text-center flex justify-center items-center'>
+                    <div className='h-12 w-12 rounded-full bg-gray-400 text-gray-800 text-center flex justify-center items-center'>
                       {user?.given_name?.[0] || 'U'}
                     </div>
                   )}
@@ -234,19 +234,19 @@ const Header = () => {
 
                 {/* User Details */}
                 <div className='flex flex-col items-center mt-2'>
-                  <p className='text-sm font-semibold text-green-50'>
+                  <p className='text-sm font-semibold text-lime-100'>
                     Hi, {user?.given_name || 'User'}
                   </p>
-                  <p className='text-xs text-green-50'>{user?.email}</p>
+                  <p className='text-xs text-lime-100'>{user?.email}</p>
                 </div>
 
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className='w-full mt-3 bg-slate-800 rounded-lg shadow-lg py-2 '
+                    className='w-full mt-3 bg-slate-200 rounded-lg shadow-lg py-2 '
                   >
                     <div className='flex flex-col items-center px-4'>
-                      <LogoutLink className='text-white px-12 py-2 bg-teal-800 hover:bg-teal-700 transition duration-300 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-opacity-50'>
+                      <LogoutLink className='text-gray-800 px-12 py-2 bg-slate-400 hover:bg-slate-300 transition duration-300 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-75'>
                         Logout
                       </LogoutLink>
                     </div>
@@ -254,8 +254,8 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <div className='w-full px-4 flex flex-col items-center mt-4'>
-                <LoginLink className='text-white px-12 py-2 bg-teal-900 hover:bg-teal-800 transition duration-300 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-opacity-50'>
+              <div className='w-full px-4 flex flex-col items-center mt-6'>
+                <LoginLink className='text-gray-800 px-12 py-2 bg-slate-400 hover:bg-slate-300 transition duration-300 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-75'>
                   Login
                 </LoginLink>
               </div>
@@ -266,10 +266,10 @@ const Header = () => {
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
-                    className={`block text-white px-4 py-2 ${
+                    className={`block text-lime-100 text-md py-3 px-4 rounded-lg hover:bg-slate-300 hover:shadow-lg transition duration-300 ${
                       pathname === link.href
-                        ? 'font-semibold bg-teal-900 text-white' // Active link with dark teal background
-                        : 'hover:bg-teal-800 hover:text-white' // Hover state with a darker slate background
+                        ? 'bg-slate-300 font-extrabold' // Active link with dark teal background
+                        : '' // Hover state with a darker slate background
                     }`}
                     href={link.href}
                     onClick={closeMobileMenu} // Close mobile menu on link click
@@ -279,6 +279,13 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+         {/* Bottom Section - Fixed to Bottom */}
+          <div className="mt-auto bg-slate-400">
+            <hr className="border-slate-300" />
+            <p className="text-center text-xs text-lime-100 py-4">
+                Deerpark work timetable
+            </p>
+          </div>         
           </nav>
         </div>
       </OutsideClickHandler>
