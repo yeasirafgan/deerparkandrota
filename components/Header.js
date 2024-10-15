@@ -25,12 +25,7 @@ const navLinks = [
     href: '/admin',
     label: 'Admin',
     requiredPermissions: ['delete:timesheet'],
-  },
-  {
-    href: '/rota',
-    label: 'Rota',
-    // requiredPermissions: ['create:rota'],
-  },
+  }
 ];
 
 const Header = () => {
@@ -94,7 +89,7 @@ const Header = () => {
       <div className='flex justify-between items-center w-full md:w-auto'>
         <Link href={'/'}>
           <h1 className='text-xl font-semibold text-slate-700'>
-            Deer Park Timesheet
+            Phoenix Carehome
           </h1>
         </Link>
         {/* Mobile menu button */}
@@ -204,7 +199,7 @@ const Header = () => {
           <nav className='w-60 h-full flex flex-col '>
             <div className='flex items-center justify-center px-4 py-3 border-b'>
               <h2 className='text-xl p-1 font-semibold text-white'>
-                Deerpark timesheet
+                Phoenix Carehome
               </h2>
               <button
                 className='text-slate-700 text-2xl pt-2'
