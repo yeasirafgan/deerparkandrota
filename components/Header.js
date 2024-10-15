@@ -202,7 +202,7 @@ const Header = () => {
                 Phoenix Carehome
               </h2>
               <button
-                className='text-slate-800 text-2xl'
+                className='text-slate-800 text-2xl pl-1'
                 onClick={closeMobileMenu} // Close mobile menu on click
               >
                 &times;
