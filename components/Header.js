@@ -262,14 +262,15 @@ const Header = () => {
             )}
 
             {/* Navigation Links */}
-            <ul className='flex-1 flex flex-col border-t border-gray-300 mt-4 bg-slate-700 '>
+        <div className="mt-4 p-4 text-gray-800 flex-grow">
+            <ul className='flex flex-col gap-y-4 py-4 px-4'>
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     className={`block text-lime-100 text-md py-3 px-4 rounded-lg hover:bg-slate-300 hover:shadow-lg transition duration-300 ${
                       pathname === link.href
-                        ? 'bg-slate-300 font-extrabold' // Active link with dark teal background
-                        : '' // Hover state with a darker slate background
+                        ? 'bg-slate-300 font-extrabold' 
+                        : '' 
                     }`}
                     href={link.href}
                     onClick={closeMobileMenu} // Close mobile menu on link click
@@ -279,6 +280,7 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+          </div>
          {/* Bottom Section - Fixed to Bottom */}
           <div className="mt-auto bg-slate-400">
             <hr className="border-slate-300" />
