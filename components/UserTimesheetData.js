@@ -70,7 +70,7 @@ const UserTimesheetData = ({ username }) => {
         <div className='text-center'>Loading timesheets...</div>
       ) : (
         <div className='overflow-x-auto rounded-md'>
-          <table className='max-w-full bg-white border text-xs sm:text-sm'>
+          <table className='min-w-[400px] sm:min-w-full bg-white border text-xs sm:text-sm'>
             <thead>
               <tr className='bg-gray-100'>
                 <th className='border px-2 sm:px-4 py-2 text-left'>Date</th>
