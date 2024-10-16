@@ -60,7 +60,7 @@ const UserTimesheetData = ({ username }) => {
     convertMinutesToHours(totalMinutes);
 
   return (
-    <div className='p-4 sm:p-5'>
+    <div className='p-4 sm:p-5 bg-gradient-to-r from-slate-100 to-slate-50 rounded-lg'>
       <h2 className='text-xl md:text-lg font-semibold mb-3 sm:mb-4 text-center sm:text-left text-slate-700'>
         {`${username}'s latest work`}
       </h2>
@@ -70,7 +70,7 @@ const UserTimesheetData = ({ username }) => {
         <div className='text-center'>Loading timesheets...</div>
       ) : (
         <div className='overflow-x-auto rounded-md'>
-          <table className='min-w-full bg-white border text-xs sm:text-sm'>
+          <table className='max-w-full bg-white border text-xs sm:text-sm'>
             <thead>
               <tr className='bg-gray-100'>
                 <th className='border px-2 sm:px-4 py-2 text-left'>Date</th>
