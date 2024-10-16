@@ -47,7 +47,7 @@ const TimesheetPage = async ({ searchParams }) => {
             Submit your timesheets and see rotas.
           </h2>
           <p className='text-lg text-slate-700 text-center mt-4'>
-            Manage your timesheet data and view your weekly rotas effortlessly.
+            Manage your timesheet data and view your weekly rotas.
           </p>
         </div>
 
