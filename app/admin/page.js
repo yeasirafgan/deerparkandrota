@@ -5,6 +5,8 @@ export const metadata = {
   description: 'Simple timesheet for Deerpark staffs',
 };
 
+export const dynamic = 'force-dynamic';
+
 import connectMongo from '@/db/connectMongo';
 import Timesheet from '@/models/Timesheet';
 import {
