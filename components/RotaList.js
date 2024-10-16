@@ -62,7 +62,7 @@ export default function RotaList({ shouldRefresh }) {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div className='p-6 bg-slate-100'>
+    <div className='p-6 bg-gradient-to-b from-slate-100 to-slate-200'>
       {error && <p className='text-red-500 mb-4'>{error}</p>}
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         {rotas.length === 0 ? (
