@@ -36,7 +36,9 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} bg-slate-100 min-h-screen`}>
         <Container>
           <Header />
-          {children}
+          <main className="flex-grow">
+            {children}
+          </main>
           <Footer />
         </Container>
       </body>
