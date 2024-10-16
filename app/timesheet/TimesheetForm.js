@@ -92,7 +92,7 @@ const TimesheetForm = ({ onSubmit, reloadData, username }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className='space-y-6 w-full p-4 bg-white rounded-lg shadow-lg border border-gray-200'
+      className='space-y-6 w-full p-4 bg-gradient-to-r from-slate-200 to-slate-100 rounded-lg shadow-lg border border-gray-200'
     >
       <div className='flex flex-col'>
         <label
