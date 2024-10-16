@@ -130,60 +130,67 @@ const AdminPage = async () => {
 
       <div className='overflow-x-auto'>
         <table className='min-w-full bg-white border border-gray-200'>
-  <thead className='bg-gray-100'>
-    <tr>
-      <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-        Name
-      </th>
-      {uniqueDateRanges.map((range, index) => (
-        <th
-          key={index}
-          className='border border-gray-300 px-1 py-0.5 text-center text-[10px] sm:text-xs md:text-sm font-semibold text-lime-800 hover:text-emerald-950'
-        >
-          {`${formatDate(new Date(range.start))} - ${formatDate(
-            new Date(range.end)
-          )}`}
-        </th>
-      ))}
-      <th className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
-        Total (4 Weeks)
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {Object.values(usersTimesheets).map((user) => (
-      <tr key={user.username} className='hover:bg-gray-50'>
-        <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-900'>
-          <Link
-            href={`/admin/${encodeURIComponent(user.username)}`}
-            className='text-emerald-700 hover:text-slate-700 font-bold'
-          >
-            {user.username || 'Unknown'}
-          </Link>
-        </td>
-        {uniqueDateRanges.map((range, index) => {
-          const periodKey = `${formatDate(
-            new Date(range.start)
-          )} - ${formatDate(new Date(range.end))}`;
-          const periodMinutes = user.periods[periodKey] || 0;
-          const { hours, minutes } = convertMinutesToHours(periodMinutes);
+          <thead className='bg-gray-100'>
+            <tr>
+              <th className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                Name
+              </th>
+              {uniqueDateRanges.map((range, index) => (
+                <th
+                  key={index}
+                  className='border border-gray-300 px-1 py-0.5 text-center text-[10px] sm:text-xs md:text-sm font-semibold text-lime-800 hover:text-emerald-950'
+                >
+                  {`${formatDate(new Date(range.start))} - ${formatDate(
+                    new Date(range.end)
+                  )}`}
+                </th>
+              ))}
+              <th className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                Total (4 Weeks)
+              </th>
+              <th className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-semibold text-lime-800 hover:text-emerald-950'>
+                Details
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.values(usersTimesheets).map((user) => (
+              <tr key={user.username} className='hover:bg-gray-50'>
+                <td className='border border-gray-300 px-2 py-1 text-left text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-900'>
+                  {user.username || 'Unknown'}
+                </td>
+                {uniqueDateRanges.map((range, index) => {
+                  const periodKey = `${formatDate(
+                    new Date(range.start)
+                  )} - ${formatDate(new Date(range.end))}`;
+                  const periodMinutes = user.periods[periodKey] || 0;
+                  const { hours, minutes } =
+                    convertMinutesToHours(periodMinutes);
 
-          return (
-            <td
-              key={index}
-              className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-semibold text-slate-700 hover:text-emerald-900'
-            >
-              {formatTime(hours, minutes)}
-            </td>
-          );
-        })}
-        <td className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-900'>
-          {formatTime(user.totalHours, user.totalMinutes)}
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+                  return (
+                    <td
+                      key={index}
+                      className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-semibold text-slate-700 hover:text-emerald-900'
+                    >
+                      {formatTime(hours, minutes)}
+                    </td>
+                  );
+                })}
+                <td className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-900'>
+                  {formatTime(user.totalHours, user.totalMinutes)}
+                </td>
+                <td className='border border-gray-300 px-2 py-1 text-center text-xs sm:text-sm'>
+                  <Link
+                    href={`/admin/${encodeURIComponent(user.username)}`}
+                    className='text-emerald-700 hover:text-green-500 font-bold'
+                  >
+                    View Details
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </main>
   );
