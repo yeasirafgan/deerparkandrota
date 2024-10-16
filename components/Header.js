@@ -85,7 +85,7 @@ const Header = () => {
   };
 
   return (
-    <header className='sticky top-0 z-50 flex flex-col md:flex-row justify-between items-center py-5 px-7 border-b bg-slate-100 text-zinc-500'>
+    <header className='relative flex flex-col md:flex-row justify-between items-center py-4 px-7 border-b bg-slate-100 text-zinc-500'>
       <div className='flex justify-between items-center w-full md:w-auto'>
         <Link href={'/'}>
           <h1 className='text-xl font-semibold text-slate-700'>
