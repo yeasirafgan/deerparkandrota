@@ -102,7 +102,7 @@ const AdminPage = async () => {
 
   return (
     <main className='p-4 sm:p-8 bg-slate-50'>
-    div>
+    <div>
       <h1 className='text-lime-900 text-md md:text-lg font-bold'>
             Hi {(await getUser()).given_name} {(await getUser()).family_name},
           </h1>
